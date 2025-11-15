@@ -24,14 +24,15 @@ def on_message(sender, msg):
         chat_messages.append(f"P{sender}: {msg['text']}")
 
 mode = input("HOST or JOIN? ").strip().lower()
-
 if mode == "host":
+    print("IP: ",net.get_local_ip())
     code = net.host(on_message)
     print("JOIN CODE:", code)
 
 elif mode == "join":
+    ip = input("IP ADDRESS: ")
     code = input("Enter join code: ")
-    net.join(code, on_message)
+    net.join(code,ip, on_message)
 
 else:
     sys.exit()

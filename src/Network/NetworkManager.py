@@ -11,12 +11,12 @@ class NetworkManager:
         self.on_message = None
 
     # call this to host the server on a given port
-    def host(self, on_message, port=5000):
+    def host(self, on_message,port=5001):
         self.is_host = True
         self.on_message = on_message
 
         # Start server
-        self.server = Server(port=port)
+        self.server = Server(self.get_local_ip(),port=port)
         self.server.start(on_message=self._server_message)
 
         time.sleep(0.2)  # allow server to start
@@ -29,11 +29,11 @@ class NetworkManager:
         return self.server.lobby_code
     
     # call this to join the server on a given port
-    def join(self, code, on_message, port=5000):
+    def join(self, code, on_message, ip, port=5001):
         self.is_host = False
         self.on_message = on_message
 
-        self.client = Client(self.get_local_ip(), port)
+        self.client = Client(ip, port)
         self.client.start(on_message=self._client_message)
 
         # Send join code to server
