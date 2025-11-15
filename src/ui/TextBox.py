@@ -2,6 +2,8 @@ import pygame;
 
 from src.util.math import relative_to_pixel, anchor_center
 
+instances = []
+
 class TextBox:
     def __init__(
             self, 
@@ -19,7 +21,9 @@ class TextBox:
         self.anchor_point = anchor_point;
         self.text = "";
         self.surface = None;
+        self.click_callback = None;
         self.update_surface();
+        instances.append(self);
     def get_pos(self):
         rel_pos = (self.position[1], self.position[3]);
         abs_pos = (self.position[0], self.position[2]);
@@ -31,6 +35,8 @@ class TextBox:
         abs_size = (self.size[0], self.size[2]);
         rel_pix = relative_to_pixel(rel_size, pygame.display.get_surface().get_size());
         return (abs_size[0] + rel_pix[0], abs_size[1] + rel_pix[1]);
+    def on_click(self, callback):
+        self.click_callback = callback;
     def update_surface(self):
         box_size = self.get_size();
         self.surface = pygame.Surface(box_size);
@@ -43,3 +49,5 @@ class TextBox:
     def set_text(self, new_text: str):
         self.text = new_text;
         self.update_surface();
+    def __del__(self):
+        instances.remove(self);
