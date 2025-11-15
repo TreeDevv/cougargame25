@@ -1,10 +1,15 @@
 
+import pygame;
+
 def pixel_to_relative(pixel_coords: (int, int), screen_size: (int, int)) -> (float, float):
     xRel = pixel_coords[0] / screen_size[0]
     yRel = pixel_coords[1] / screen_size[1]
     return (xRel, yRel)
                             
-def relative_to_pixel(relative_coords: (float, float), screen_size: (int, int)) -> (int, int):
+def relative_to_pixel(relative_coords: (float, float), screen_size: (int, int) = None) -> (int, int):
+    if screen_size is None and pygame.display.get_window_size() != (0, 0):
+        screen = pygame.display.get_surface()
+        screen_size = screen.get_size()
     xPix = int(relative_coords[0] * screen_size[0])
     yPix = int(relative_coords[1] * screen_size[1])
     return (xPix, yPix)
