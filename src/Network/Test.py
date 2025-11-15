@@ -32,7 +32,7 @@ if mode == "host":
 elif mode == "join":
     ip = input("IP ADDRESS: ")
     code = input("Enter join code: ")
-    net.join(code,ip, on_message)
+    net.join(code,on_message,ip)
 
 else:
     sys.exit()
