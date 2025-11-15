@@ -1,5 +1,5 @@
 import pygame
-from PIL import Image,ImageStat
+from PIL import Image,ImageStat, ImageOps, ImageEnhance
 import os
 
 
@@ -12,7 +12,7 @@ import os
 
 def pixelizeImage(currentImage, SIZE):
 
-#RESIZE IMAGE TO MAX HEIGHT OF 500 FOR PROCESSING
+#RESIZE IMAGE TO MAX HEIGHT OF 1500 FOR PROCESSING
     ORIGINAL_SIZE = currentImage.size
     MAX_HEIGHT = 1500
     w, h = ORIGINAL_SIZE
@@ -91,7 +91,7 @@ photoList = [
     "record2.jpg",
 ]
 base_path = os.path.join(os.path.dirname(__file__), 'scenes', 'Media')
-output_path = os.path.join(base_path, 'Pixelized')
+output_path = os.path.join(base_path, 'Colorfiltered')#This changes the path to where the new images will be saved
 
 # Create output folder if it doesn't exist
 os.makedirs(output_path, exist_ok=True)
@@ -105,13 +105,34 @@ for filename in photoList:
 
     img = Image.open(full_path)
 
-    pixel_size = (img.width // 60, img.height // 60)
+    ORIGINAL_SIZE = img.size
+    MAX_HEIGHT = 1500
+    w, h = ORIGINAL_SIZE
+    scale_factor = MAX_HEIGHT / h
+    resized_width = int(w * scale_factor)
+    resized_height = MAX_HEIGHT
+    resized = img.resize((resized_width, resized_height), Image.NEAREST)
 
-    updatedImage = pixelizeImage(img, pixel_size)
+
+  
+
+    updatedImage = resized.convert("L")  # Convert to grayscale
+
+    contrastedImage = ImageEnhance.Contrast(updatedImage)
+    contrast_img = contrastedImage.enhance(2)  # Increase contrast
+
+    posterizedImage = ImageOps.posterize(contrast_img, bits=3)  # Posterize to reduce colors
+
+    tintedImage = ImageOps.colorize(
+        posterizedImage,
+        black= "#4403ae",
+        white= "#ff00ff"
+    )
+
     
     # Save the pixelized image
-    output_file = os.path.join(output_path, f"pixelized_{filename}")
-    updatedImage.save(output_file)
+    output_file = os.path.join(output_path, f"colorfilter_{filename}")
+    tintedImage.save(output_file)
     print(f"Saved: {output_file}")
 
 
