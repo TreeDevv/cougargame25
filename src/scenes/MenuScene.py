@@ -1,8 +1,18 @@
+import random
 import pygame
 import thorpy as tp
 
 from src.util.math import relative_to_pixel, anchor_center
 from src.scenes.Scene import Scene
+
+def create_dithered_surface():
+    noise = pygame.Surface(pygame.display.get_window_size())
+    for x in range(0, noise.get_size()[0], 4):
+        for y in range(0, noise.get_size()[1], 4):
+            shade = 30 if random.random() < 0.5 else -30
+            color = (128 + shade, 20, 128 + shade)   # small color jitter
+            noise.fill(color, (x, y, 4, 4))
+    return noise
 
 class MenuScene(Scene):
     def __init__(self, game):
@@ -34,6 +44,10 @@ class MenuScene(Scene):
         self.join_code_input.update(pygame.mouse.get_pos());
     def render(self, screen):
         screen.fill((25, 100, 50));
+        noise = create_dithered_surface()
+        noise.set_alpha(40)
+        screen.blit(noise, (0, 0))
+
         self.title_label.draw()
         self.join_code_input.draw()
         self.create_lobby_button.draw()
