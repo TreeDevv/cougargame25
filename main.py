@@ -7,7 +7,6 @@ from src.scenes.MenuScene import MenuScene
 from src.scenes.GameScene import GameScene
 from src.scenes.GameOverScene import GameOverScene
 
-
 class Game:
     def __init__(self):
         pygame.init()

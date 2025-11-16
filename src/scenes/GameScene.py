@@ -1,10 +1,7 @@
 from src.scenes.Scene import Scene
 import pygame
 import time
-import random
-from src.util.ImageLoader import get_Random_Index, get_image_by_index
-from src.util.math import relative_to_pixel
-
+from src.util.ImageLoader import get_total_num
 class GameScene(Scene):
     def __init__(self, game):
         pygame.mixer.init()
@@ -20,9 +17,11 @@ class GameScene(Scene):
         self.display_image = None
         screen = pygame.display.get_surface()
         screen_rect = screen.get_rect()
-
+        self.total_Score = get_total_num()
         self.timer_duration = 300
         self.timer = time.time() + self.timer_duration
+
+        self.score = 0
 
         self.title_surf = self.title_font.render("Homographio", True, (255, 255, 255))
         self.title_rect = self.title_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery -420 ))
@@ -85,11 +84,12 @@ class GameScene(Scene):
             self.game.net_ctrl.send_word(text)
             self.input_text = ""
 
+    def Update_Score(self):
+        self.score += 1
 
     def submit_chat(self):
         text = self.chat_draft.strip()
         if text != "":
-            self.chat_history.append(text)
             self.game.net_ctrl.send_chat(text)
 
         self.chat_draft = ""
@@ -123,7 +123,10 @@ class GameScene(Scene):
             remaining = 0
 
         timer_text = self.font.render(f"Time: {remaining}", True, (255, 255, 255))
-        screen.blit(timer_text, (screen.get_width() - 200, 20))
+        screen.blit(timer_text, (screen.get_width() - 250, 20))
+
+        score_text = self.font.render(f"Score: {self.score} / {self.total_Score}", True, (255, 255, 255))
+        screen.blit(score_text, (20, 20))
 
         color = (255, 255, 255) if self.active else (180, 180, 180)
         pygame.draw.rect(screen, color, self.input_box, border_radius=8)
