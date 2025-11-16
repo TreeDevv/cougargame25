@@ -1,26 +1,6 @@
 import pygame
-import random
-from src.scenes.Scene import Scene
 from src.util.math import relative_to_pixel
-
-def clamp(v):
-    return max(0, min(255, v))
-
-def create_dithered_surface():
-    width, height = pygame.display.get_window_size()
-    noise = pygame.Surface((width, height))
-    base = (30, 100, 200)
-    
-    for x in range(0, width, 4):
-        for y in range(0, height, 4):
-            shade = 30 if random.random() < 0.5 else -30
-            r = clamp(base[0] + shade)
-            g = clamp(base[1] + shade)
-            b = clamp(base[2] + shade)
-            noise.fill((r, g, b), (x, y, 4, 4))
-    return noise
-
-
+from src.scenes.Scene import Scene
 class MenuScene(Scene):
     def __init__(self, game):
         self.game = game  
@@ -99,7 +79,7 @@ class MenuScene(Scene):
 
     def render(self, screen):
         screen.fill((85, 34, 93))
-        noise = create_dithered_surface()
+        noise = super().create_dithered_surface()
         noise.set_alpha(40)
         screen.blit(noise, (0, 0))
 

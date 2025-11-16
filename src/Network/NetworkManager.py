@@ -69,7 +69,7 @@ class NetworkManager:
 
     def _server_message(self, sender, msg):
         print("[SERVER MSG]", sender, msg)
-        if self.on_message:
+        if self.on_message and not self.is_host:
             self.on_message(sender, msg)
 
     def _client_message(self, sender, msg):

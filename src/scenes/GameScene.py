@@ -1,9 +1,7 @@
 from src.scenes.Scene import Scene
 import pygame
 import time
-from src.util.ImageLoader import get_Random_Index, get_image_by_index
-
-
+from src.util.ImageLoader import get_total_num
 class GameScene(Scene):
     def __init__(self, game):
         pygame.mixer.init()
@@ -12,28 +10,30 @@ class GameScene(Scene):
         pygame.mixer.music.set_volume(0.1)
 
         self.game = game
-        self.title_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 64)
-        self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 40)
+        self.title_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 24)
+        self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 48)
         self.input_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 32)
 
         self.display_image = None
         screen = pygame.display.get_surface()
         screen_rect = screen.get_rect()
-
+        self.total_Score = get_total_num()
         self.timer_duration = 300
         self.timer = time.time() + self.timer_duration
 
+        self.score = 0
+
         self.title_surf = self.title_font.render("Homographio", True, (255, 255, 255))
-        self.title_rect = self.title_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery - 200))
+        self.title_rect = self.title_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery -420 ))
 
-        self.placeholder_rect = pygame.Rect(0, 0, 300, 200)
-        self.placeholder_rect.center = screen_rect.center
+        self.placeholder_rect = pygame.Rect(0, 0, 400, 300)
+        self.placeholder_rect.center = (screen_rect.centerx, screen_rect.centery -150)
 
-        self.enter_surf = self.font.render("Enter World", True, (255, 255, 255))
-        self.enter_rect = self.enter_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery + 140))
+        self.enter_surf = self.font.render("Guess the homograph!", True, (255, 255, 255))
+        self.enter_rect = self.enter_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery - 360))
 
         self.input_box = pygame.Rect(0, 0, 350, 50)
-        self.input_box.center = (screen_rect.centerx - 100, screen_rect.centery + 230)
+        self.input_box.center = (screen_rect.centerx - 100, screen_rect.centery + 80)
         self.input_text = ""
         self.active = False
 
@@ -84,11 +84,12 @@ class GameScene(Scene):
             self.game.net_ctrl.send_word(text)
             self.input_text = ""
 
+    def Update_Score(self):
+        self.score += 1
 
     def submit_chat(self):
         text = self.chat_draft.strip()
         if text != "":
-            self.chat_history.append(text)
             self.game.net_ctrl.send_chat(text)
 
         self.chat_draft = ""
@@ -100,6 +101,10 @@ class GameScene(Scene):
 
     def render(self, screen):
         screen.fill((25, 100, 50))
+
+        noise = super().create_dithered_surface()
+        noise.set_alpha(40)
+        screen.blit(noise, (0, 0))
 
         screen.blit(self.title_surf, self.title_rect)
 
@@ -118,7 +123,10 @@ class GameScene(Scene):
             remaining = 0
 
         timer_text = self.font.render(f"Time: {remaining}", True, (255, 255, 255))
-        screen.blit(timer_text, (screen.get_width() - 200, 20))
+        screen.blit(timer_text, (screen.get_width() - 250, 20))
+
+        score_text = self.font.render(f"Score: {self.score} / {self.total_Score}", True, (255, 255, 255))
+        screen.blit(score_text, (20, 20))
 
         color = (255, 255, 255) if self.active else (180, 180, 180)
         pygame.draw.rect(screen, color, self.input_box, border_radius=8)

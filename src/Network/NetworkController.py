@@ -29,13 +29,20 @@ class NetworkGameController:
             self.handle_image(msg["id"])
             return
         if msg_type == "image":
+            self.game.current_scene.Update_Score()
             self.handle_image(msg["id"])
             return
         if msg_type == "chat":
-            self.game.current_scene.chat_history.append(msg["text"])
-            if len(self.game.current_scene.chat_history) > self.game.current_scene.max_chat_lines:
-                self.game.current_scene.chat_history.pop(0)
+            self.AddMessage(msg["text"])
+
             return
+
+    def AddMessage(self, msg):
+        self.game.current_scene.chat_history.append(msg)
+        self.chat_history = self.game.current_scene.chat_history
+
+        if len(self.chat_history) > self.game.current_scene.max_chat_lines:
+            self.chat_history.pop(0)
 
 
     def handle_submit(self, sender, text):
@@ -51,14 +58,13 @@ class NetworkGameController:
 
             if correct:
                 print("[GAME] Words match! Correct homograph.")
-
                 if self.net.is_host and len(self.net.server.clients) >= 2:
                     self.send_new_image()
+                self.submitted_words.clear()
 
             else:
                 print("[GAME] Incorrect words. Try again.")
 
-            self.submitted_words.clear()
 
     def handle_join(self):
         if self.net.is_host and len(self.net.server.clients) >= 2:
@@ -92,6 +98,8 @@ class NetworkGameController:
 
     def send_chat(self, word):
         self.net.send({"type": "chat", "text": word})
+        if not self.net.is_host:
+            self.AddMessage(word)
 
     def send_new_image(self):
         img_id = get_Random_Index()
