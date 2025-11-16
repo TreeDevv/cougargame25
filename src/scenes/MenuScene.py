@@ -14,6 +14,8 @@ def create_dithered_surface():
             noise.fill(color, (x, y, 4, 4))
     return noise
 
+MENU_FILL_COLOR = (25, 100, 50)
+
 class MenuScene(Scene):
     def __init__(self, game):
         self.game = game;
@@ -30,10 +32,6 @@ class MenuScene(Scene):
         join_code_pos = relative_to_pixel((0.5, 0.4))
         self.join_code_input.set_center(join_code_pos[0], join_code_pos[1])
 
-        def focus_box():
-            self.join_code_input.focus()
-        self.join_code_input.default_at_click = focus_box
-
         self.create_lobby_button = tp.Button("Create Lobby")
         self.create_lobby_button.set_bck_color((128, 0, 128))
         create_lobby_pos = relative_to_pixel((0.5, 0.5))
@@ -43,7 +41,7 @@ class MenuScene(Scene):
     def update(self, dt: float):
         self.join_code_input.update(pygame.mouse.get_pos());
     def render(self, screen):
-        screen.fill((25, 100, 50));
+        screen.fill(MENU_FILL_COLOR);
         noise = create_dithered_surface()
         noise.set_alpha(40)
         screen.blit(noise, (0, 0))
@@ -52,3 +50,23 @@ class MenuScene(Scene):
         self.join_code_input.draw()
         self.create_lobby_button.draw()
         # Render the ui elements in scene
+
+class LobbyCreatedScene(Scene):
+    def __init__(self, game):
+        self.game = game;
+        self.lobby_code = "ABCD1234";
+        self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 32);
+    
+        self.info_label = tp.Text(f"Lobby Created!\n Code: {self.lobby_code}", font_size=32)
+        self.info_label.center_on(pygame.display.get_surface().get_rect())
+    def handle_events(self, events):
+        pass;
+    def update(self, dt: float):
+        pass;
+    def render(self, screen):
+        screen.fill(MENU_FILL_COLOR);
+        noise = create_dithered_surface()
+        noise.set_alpha(40)
+        screen.blit(noise, (0, 0))
+
+        self.info_label.draw()

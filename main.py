@@ -24,7 +24,7 @@ class Game:
         self.counter = 0
     def run(self):
         self.running = True;
-        
+    
         screen = self.screen
         clock = pygame.time.Clock();
 
