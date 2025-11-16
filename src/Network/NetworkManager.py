@@ -46,10 +46,29 @@ class NetworkManager:
         })
 
 
-
-
     def _server_message(self, sender, msg):
         print("[SERVER MSG]", sender, msg)
+
+        ## Middleware to check codes and return early if not existant
+        # if msg.get("type") == "join":
+        #     code = msg.get("code")
+        #     conn = self.server.clients.get(sender)
+        #     if code != self.server.lobby_code:
+        #         if conn:
+        #             conn.send(pickle.dumps((1, {
+        #                 "type": "join_result",
+        #                 "ok": False,
+        #                 "reason": "Invalid lobby code"
+        #             })))
+        #         return # Not valid lobby code
+            
+        #     if conn:
+        #         conn.send(pickle.dumps((1, {
+        #             "type": "join_result",
+        #             "ok": True,
+        #             "player_id": sender
+        #         })))
+
         if self.on_message:
             self.on_message(sender, msg)
 

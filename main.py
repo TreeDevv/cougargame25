@@ -1,3 +1,4 @@
+import time
 import pygame;
 import thorpy as tp;
 import sys
@@ -18,7 +19,7 @@ class Game:
         tp.set_default_font("assets/fonts/StarCrush.ttf", 32)
         tp.init(self.screen, tp.theme_game1)
         self.start_network()
-        self.current_scene = GameScene(self);
+        self.current_scene = MenuScene(self);
         self.submitted_words = {}
         self.word = ""
         self.counter = 0
@@ -44,7 +45,7 @@ class Game:
         self.current_scene = new_scene;
 
     def start_network(self):
-        mode = input("HOST or JOIN? ").strip().lower()
+        # mode = input("HOST or JOIN? ").strip().lower()
 
         def on_message(sender, msg):
             if msg["type"] == "init":
@@ -78,16 +79,23 @@ class Game:
                     else:
                         print("Wrong")
                     self.submitted_words.clear()
-                return
+                
+            if msg["type"] == "start_game":
+                self.change_scene(GameScene(self))
             if msg["type"] == "join":
                  if self.net.is_host and len(self.net.server.clients) >= 2:
                     image_index = get_Random_Index()
-    
+
+                    self.net.send({
+                        "type": "start_game",
+                    })
+                    time.sleep(0.3)
                     self.net.send({
                         "type": "image",
                         "id": image_index
                     })
-    
+            if msg["type"] == "join_result" and msg["ok"] == False:
+                pass; #TODO Optionally add some sort of alert or indicator of invalid code
             if msg["type"] == "image":
                 print("[NET] Received image index:", msg["id"])
                 path = "./images/scenes/Media/"
@@ -105,21 +113,21 @@ class Game:
                     print("[NET] Image loaded:", path)
                 except Exception as e:
                     print("[ERROR] Failed to load image:", path, e)
+        self.on_message = on_message
 
+        # if mode == "host":
+        #     print("LOCAL IP:", self.net.get_local_ip())
+        #     code = self.net.host(on_message)
+        #     print("JOIN CODE:", code)
 
-        if mode == "host":
-            print("LOCAL IP:", self.net.get_local_ip())
-            code = self.net.host(on_message)
-            print("JOIN CODE:", code)
+        # elif mode == "join":
+        #     ip = input("Server IP: ")
+        #     code = input("Join Code: ")
+        #     self.net.join(code, on_message, ip)
 
-        elif mode == "join":
-            ip = input("Server IP: ")
-            code = input("Join Code: ")
-            self.net.join(code, on_message, ip)
-
-        else:
-            print("Invalid selection. Exiting.")
-            exit()
+        # else:
+        #     print("Invalid selection. Exiting.")
+        #     exit()
 
     def net_send(self, text):
         self.net.send({"type": "submit", "text": text})

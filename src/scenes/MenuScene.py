@@ -32,14 +32,25 @@ class MenuScene(Scene):
         join_code_pos = relative_to_pixel((0.5, 0.4))
         self.join_code_input.set_center(join_code_pos[0], join_code_pos[1])
 
+        def validate_code():
+            code = self.join_code_input.get_value().lower()
+            self.game.net.join(code, self.game.on_message, self.game.net.get_local_ip())
+        self.join_code_input.on_validation = validate_code
+
         self.create_lobby_button = tp.Button("Create Lobby")
         self.create_lobby_button.set_bck_color((128, 0, 128))
         create_lobby_pos = relative_to_pixel((0.5, 0.5))
         self.create_lobby_button.set_center(create_lobby_pos[0], create_lobby_pos[1])
+
+        def create_lobby():
+            print("New lobby created")
+            self.game.change_scene(LobbyCreatedScene(self.game))
+        self.create_lobby_button.at_unclick = create_lobby  
     def handle_events(self, events):
         pass;
     def update(self, dt: float):
         self.join_code_input.update(pygame.mouse.get_pos());
+        self.create_lobby_button.update(pygame.mouse.get_pos())
     def render(self, screen):
         screen.fill(MENU_FILL_COLOR);
         noise = create_dithered_surface()
@@ -54,11 +65,21 @@ class MenuScene(Scene):
 class LobbyCreatedScene(Scene):
     def __init__(self, game):
         self.game = game;
-        self.lobby_code = "ABCD1234";
+
+        # Start the server
+        self.lobby_code = self.game.net.host(self.game.on_message)
+
         self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 32);
     
-        self.info_label = tp.Text(f"Lobby Created!\n Code: {self.lobby_code}", font_size=32)
+        self.title_label = tp.Text("Homographio", font_size=64)
+        self.title_label.center_on(pygame.display.get_surface().get_rect())
+
+        title_label_pos = relative_to_pixel((0.5, 0.2))
+        self.title_label.set_center(title_label_pos[0], title_label_pos[1])
+
+        self.info_label = tp.Text(f"Lobby Created\nCode: {self.lobby_code}", font_size=32)
         self.info_label.center_on(pygame.display.get_surface().get_rect())
+
     def handle_events(self, events):
         pass;
     def update(self, dt: float):
@@ -70,3 +91,4 @@ class LobbyCreatedScene(Scene):
         screen.blit(noise, (0, 0))
 
         self.info_label.draw()
+        self.title_label.draw()
