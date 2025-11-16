@@ -1,6 +1,6 @@
 import pygame
-from src.util.ImageLoader import get_Random_Index, get_record_name, get_image_by_index
-
+from src.util.ImageLoader import get_Random_Index, get_record_name, get_image_by_index, has_index
+import random
 class NetworkGameController:
     def __init__(self, game, network):
         self.game = game
@@ -36,6 +36,10 @@ class NetworkGameController:
             self.AddMessage(msg["text"])
 
             return
+        if msg_type == "end":
+            self.game.end_gameplay()
+
+            return
 
     def AddMessage(self, msg):
         self.game.current_scene.chat_history.append(msg)
@@ -59,7 +63,10 @@ class NetworkGameController:
             if correct:
                 print("[GAME] Words match! Correct homograph.")
                 if self.net.is_host and len(self.net.server.clients) >= 2:
-                    self.send_new_image()
+                    if not has_index():
+                        self.net.send({"type": "end"})
+                    else:    
+                        self.send_new_image()
                 self.submitted_words.clear()
 
             else:
@@ -76,7 +83,17 @@ class NetworkGameController:
 
     def handle_image(self, image_id):
         print("[NET] Received image id:", image_id)
-        path = "./images/scenes/Media/Invertedcolor/"
+        BASE_PATH = "./images/scenes/Media/"
+
+        FOLDERS = [
+            "Invertedcolor",
+            "Pixelized",
+            "Colorfiltered",
+            "Sameheight_Images"
+        ]
+        folder = random.choice(FOLDERS)
+        
+        path = f"./images/scenes/Media/{folder}/"
 
         host = self.net.is_host
         self.secret_word = get_record_name(image_id)
@@ -104,7 +121,6 @@ class NetworkGameController:
     def send_new_image(self):
         img_id = get_Random_Index()
         if img_id == None:
-            self.game.end_gameplay()
             return
         self.net.send({"type": "image", "id": img_id})
 

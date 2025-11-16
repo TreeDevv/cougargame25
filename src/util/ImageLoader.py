@@ -55,6 +55,8 @@ def get_Random_Index():
     _available_indices.remove(index)
     return index
 
+def has_index():
+    return _available_indices
 
 def get_record_name(index) -> str:
     return pairs[index][0].split(".")[0].rstrip("0123456789")

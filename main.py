@@ -48,7 +48,6 @@ class Game:
         self.change_scene(GameScene(self))
     
     def end_gameplay(self):
-        game = Game()
         self.change_scene(GameOverScene(self))
     
     def restart_gameplay(self):
