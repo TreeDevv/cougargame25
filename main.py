@@ -13,6 +13,9 @@ class Game:
         pygame.mixer.init()
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
+        icon_image = pygame.image.load('assets/logo/HomographioAppIcon.png')
+        pygame.display.set_icon(icon_image)
+
         pygame.display.set_caption("Homographio")
         self.net = NetworkManager()
         self.net_ctrl = NetworkGameController(self, self.net)
