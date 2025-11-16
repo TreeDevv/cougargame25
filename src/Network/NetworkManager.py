@@ -55,10 +55,9 @@ class NetworkManager:
             self.client.start(on_message=self._client_message)
         except Exception as e:
             print(f"[NETWORK] Failed to start client: {e}")
-            return False  # join failed
+            return False  # Immediate failure (can't start client)
 
-        time.sleep(0.3)
-
+        # Just send join request — DO NOT BLOCK
         try:
             self.client.send({
                 "type": "join",
@@ -68,7 +67,9 @@ class NetworkManager:
             print(f"[NETWORK] Failed to send join request: {e}")
             return False
 
+        # Do not confirm success here — wait for server message
         return True
+
 
 
     def stop_network(self):

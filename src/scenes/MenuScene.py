@@ -9,7 +9,7 @@ class MenuScene(Scene):
         pygame.mixer.music.play(-1)
         pygame.mixer.music.set_volume(0.2)
         self.net_ctrl = game.net_ctrl  # use network controller
-    
+        self.ans = False
         screen = pygame.display.get_surface()
         self.screen_rect = screen.get_rect()
 
@@ -62,8 +62,8 @@ class MenuScene(Scene):
         #     print("JOIN CODE:", join_code)
         # else:
         print("[MENU] Joining lobby:", code)
-        self.net_ctrl.join_lobby(code)
-        self.lobby_message = "Joining lobby..."
+        self.ans = self.net_ctrl.join_lobby(code)
+        self.lobby_message = "Wrong Code..."
 
         self.input_text = ""
 
@@ -84,7 +84,7 @@ class MenuScene(Scene):
         screen.blit(noise, (0, 0))
 
         screen.blit(self.title_surf, self.title_rect)
-        if self.lobby_message == "":
+        if not self.ans:
             pygame.draw.rect(screen,
                             (255, 255, 255) if self.input_active else (200, 200, 200),
                             self.input_rect, 2)
