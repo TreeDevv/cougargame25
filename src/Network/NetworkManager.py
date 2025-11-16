@@ -83,4 +83,4 @@ class NetworkManager:
             ip = "127.0.0.1"
         finally:
             s.close()
-        return ip
+        return "127.0.0.1"
