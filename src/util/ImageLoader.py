@@ -1,5 +1,6 @@
 import random
 import pygame
+
 photoList = [
     "axes1.jpg","axes2.jpg",
     "ball1.jpg","ball2.jpg",
@@ -27,14 +28,17 @@ photoList = [
     "palm1.jpg","palm2.jpg",
     "park1.jpg","park2.jpg",
     "patient1.jpg","patient2.jpg",
-    "peak1.jpg","peak2.jpg",
-    "pen1.jpg","pen2.jpg",
+     "peak1.jpg","peak2.jpg",
+     "pen1.jpg","pen2.jpg",
     "record1.jpg","record2.jpg",
 ]
 
-pairs = []
-for i in range(0, len(photoList), 2):
-    pairs.append((photoList[i], photoList[i + 1]))
+# Create tuple pairs
+pairs = [(photoList[i], photoList[i + 1]) for i in range(0, len(photoList), 2)]
+
+# Create index pool
+_available_indices = list(range(len(pairs)))
+
 
 def get_image_by_index(index, is_first):
     img1, img2 = pairs[index]
@@ -42,7 +46,19 @@ def get_image_by_index(index, is_first):
 
 
 def get_Random_Index():
-    return random.randint(0, len(pairs) - 1)
+    global _available_indices
+
+    if not _available_indices:
+        return None  # all used up
+
+    index = random.choice(_available_indices)
+    _available_indices.remove(index)
+    return index
+
 
 def get_record_name(index) -> str:
     return pairs[index][0].split(".")[0].rstrip("0123456789")
+
+
+def get_total_num():
+    return len(pairs)

@@ -5,13 +5,15 @@ from src.Network.NetworkController import NetworkGameController
 
 from src.scenes.MenuScene import MenuScene
 from src.scenes.GameScene import GameScene
+from src.scenes.GameOverScene import GameOverScene
 
 
 class Game:
     def __init__(self):
         pygame.init()
         pygame.mixer.init()
-        self.screen = pygame.display.set_mode((800, 600))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
         pygame.display.set_caption("Homographio")
         self.net = NetworkManager()
         self.net_ctrl = NetworkGameController(self, self.net)
@@ -45,6 +47,15 @@ class Game:
 
     def start_gameplay(self):
         self.change_scene(GameScene(self))
+    
+    def end_gameplay(self):
+        game = Game()
+        self.change_scene(GameOverScene(self))
+    
+    def restart_gameplay(self):
+        self.net = NetworkManager()
+        self.net_ctrl = NetworkGameController(self, self.net)
+        self.current_scene = MenuScene(self)
 
 
 if __name__ == "__main__":
