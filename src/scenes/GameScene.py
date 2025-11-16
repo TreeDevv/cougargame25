@@ -29,7 +29,7 @@ class GameScene(Scene):
         self.placeholder_rect = pygame.Rect(0, 0, 400, 300)
         self.placeholder_rect.center = (screen_rect.centerx, screen_rect.centery -150)
 
-        self.enter_surf = self.font.render("Guess the homograph!", True, (255, 255, 255))
+        self.enter_surf = self.font.render("Guess The Homograph", True, (255, 255, 255))
         self.enter_rect = self.enter_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery - 360))
 
         self.input_box = pygame.Rect(0, 0, 350, 50)
