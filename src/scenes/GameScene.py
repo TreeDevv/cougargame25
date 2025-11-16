@@ -44,7 +44,6 @@ class GameScene(Scene):
                 if self.button_rect.collidepoint(event.pos):
                     self.submit_clicked()
 
-            # Keyboard input (active only)
             if event.type == pygame.KEYDOWN:
                 if self.active:
                     if event.key == pygame.K_RETURN:
@@ -58,7 +57,7 @@ class GameScene(Scene):
     def submit_clicked(self):
         print("Submitted Text:", self.input_text)
         if self.input_text.strip() != "":
-            self.game.net_send(self.input_text)  # send to server/clients
+            self.game.net_ctrl.send_word(self.input_text)  
             print("Sent:", self.input_text)
             self.input_text = ""
 
@@ -71,11 +70,9 @@ class GameScene(Scene):
         screen.blit(self.title_surf, self.title_rect)
 
         if self.display_image is None:
-            # draw rectangle placeholder
             pygame.draw.rect(screen, (200, 200, 200), self.placeholder_rect, border_radius=20)
             pygame.draw.rect(screen, (150, 150, 150), self.placeholder_rect, 4, border_radius=20)
         else:
-            # center image inside placeholder
             img_rect = self.display_image.get_rect(center=self.placeholder_rect.center)
             screen.blit(self.display_image, img_rect)
 

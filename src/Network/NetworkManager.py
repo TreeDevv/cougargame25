@@ -3,7 +3,6 @@ from src.Network.Client import Client
 from src.Network.Server import Server
 import pickle
 import socket
-from src.util.ImageLoader import get_image_by_index, get_Random_Index
 
 class NetworkManager:
     def __init__(self):
@@ -12,16 +11,14 @@ class NetworkManager:
         self.is_host = False
         self.on_message = None
 
-    # call this to host the server on a given port
     def host(self, on_message,port=5001):
         self.is_host = True
         self.on_message = on_message
 
-        # Start server
         self.server = Server(self.get_local_ip(),port=port)
         self.server.start(on_message=self._server_message)
 
-        time.sleep(0.2)  # allow server to start
+        time.sleep(0.2) 
 
         self.client = Client(self.get_local_ip(), port)
         self.client.start(on_message=self._client_message)
@@ -30,22 +27,18 @@ class NetworkManager:
         print("[NETWORK] Hosting game.")
         return self.server.lobby_code
     
-    # call this to join the server on a given port
     def join(self, code, on_message, ip, port=5001):
         self.is_host = False
         self.on_message = on_message
-
+        ip = self.get_local_ip()
         self.client = Client(ip, port)
         self.client.start(on_message=self._client_message)
 
-        # Send join code to server
         time.sleep(0.3)
         self.client.send({
             "type": "join",
             "code": code
         })
-
-
 
 
     def _server_message(self, sender, msg):
@@ -79,8 +72,14 @@ class NetworkManager:
         try:
             s.connect(("8.8.8.8", 80))
             ip = s.getsockname()[0]
+            print(ip)
         except:
             ip = "127.0.0.1"
         finally:
             s.close()
-        return ip
+        with open("src/Network/IPConfig.txt", "r") as file:
+            for line in file:
+                if "=" in line:
+                    _, value = line.strip().split("=", 1)
+                    ip = value
+        return "146.163.43.136"

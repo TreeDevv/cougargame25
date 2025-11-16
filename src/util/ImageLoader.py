@@ -32,8 +32,6 @@ photoList = [
     "record1.jpg","record2.jpg",
 ]
 
-
-# pair them automatically
 pairs = []
 for i in range(0, len(photoList), 2):
     pairs.append((photoList[i], photoList[i + 1]))
