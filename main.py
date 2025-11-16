@@ -90,7 +90,7 @@ class Game:
     
             if msg["type"] == "image":
                 print("[NET] Received image index:", msg["id"])
-                path = "C:/GameJam2025/images/scenes/Media/"
+                path = "./images/scenes/Media/"
                 print(path)
                 bo = self.net.is_host
                 self.word = get_record_name(msg["id"])
