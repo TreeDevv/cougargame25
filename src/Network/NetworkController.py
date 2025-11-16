@@ -26,7 +26,10 @@ class NetworkGameController:
             return
         if msg_type == "Start":  
             self.game.start_gameplay()
-            self.send_new_image()
+            if not self.net.is_host:
+                self.net.send({"type": "Start"})
+            else:
+                self.send_new_image()
             return
         if msg_type == "image":
             self.handle_image(msg["id"])
@@ -55,8 +58,8 @@ class NetworkGameController:
     def handle_join(self):
         if self.net.is_host and len(self.net.server.clients) >= 2:
             self.net.send({"type": "Start"})
-            self.game.start_gameplay()
-            self.send_new_image()
+            #self.game.start_gameplay()
+            #self.send_new_image()
 
     def handle_image(self, image_id):
         print("[NET] Received image id:", image_id)
