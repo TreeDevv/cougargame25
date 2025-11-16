@@ -54,9 +54,11 @@ class Game:
         self.change_scene(GameOverScene(self, msg))
     
     def restart_gameplay(self):
-        self.net = NetworkManager()
-        self.net_ctrl = NetworkGameController(self, self.net)
+        self.net.stop_network()
+        #self.net = NetworkManager()
+        #self.net_ctrl = NetworkGameController(self, self.net)
         self.current_scene = MenuScene(self)
+
 
 
 if __name__ == "__main__":
