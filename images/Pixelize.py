@@ -91,7 +91,7 @@ photoList = [
     "record2.jpg",
 ]
 base_path = os.path.join(os.path.dirname(__file__), 'scenes', 'Media')
-output_path = os.path.join(base_path, 'Invertedcolor')#This changes the path to where the new images will be saved
+output_path = os.path.join(base_path, 'Colorfiltered')#This changes the path to where the new images will be saved
 
 # Create output folder if it doesn't exist
 os.makedirs(output_path, exist_ok=True)
@@ -113,7 +113,9 @@ for filename in photoList:
     resized_height = MAX_HEIGHT
     resized = img.resize((resized_width, resized_height), Image.NEAREST)
 
-
+    
+    pixel_size = (resized.width // 20, resized.height // 20)
+    pixelizedImage = pixelizeImage(resized, pixel_size)
   
 
     updatedImage = resized.convert("L")  # Convert to grayscale
@@ -133,7 +135,7 @@ for filename in photoList:
     
     # Save the pixelized image
     output_file = os.path.join(output_path, f"{filename}")
-    invertedImage.save(output_file)
+    tintedImage.save(output_file)
     print(f"Saved: {output_file}")
 
 
