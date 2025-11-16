@@ -18,7 +18,7 @@ class GameScene(Scene):
         screen = pygame.display.get_surface()
         screen_rect = screen.get_rect()
         self.total_Score = get_total_num()
-        self.timer_duration = 300
+        self.timer_duration = 180
         self.timer = time.time() + self.timer_duration
 
         self.score = 0
@@ -119,7 +119,7 @@ class GameScene(Scene):
 
         remaining = int(self.timer - time.time())
         if remaining <= 0:
-            self.game.end_gameplay()
+            self.game.end_gameplay("Game Over")
             remaining = 0
 
         timer_text = self.font.render(f"Time: {remaining}", True, (255, 255, 255))

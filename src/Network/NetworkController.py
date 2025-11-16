@@ -37,7 +37,7 @@ class NetworkGameController:
 
             return
         if msg_type == "end":
-            self.game.end_gameplay()
+            self.game.end_gameplay("You won the game")
 
             return
 

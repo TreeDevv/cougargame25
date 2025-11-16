@@ -50,8 +50,8 @@ class Game:
     def start_gameplay(self):
         self.change_scene(GameScene(self))
     
-    def end_gameplay(self):
-        self.change_scene(GameOverScene(self))
+    def end_gameplay(self, msg):
+        self.change_scene(GameOverScene(self, msg))
     
     def restart_gameplay(self):
         self.net = NetworkManager()
