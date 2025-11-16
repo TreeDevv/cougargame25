@@ -93,3 +93,15 @@ class Server:
             for pid, conn in self.clients.items():
                 if pid != sender_id:  # do not echo back to sender
                     conn.send(packet)
+    
+    def stop(self):
+        print("[SERVER] Stopping server...")
+        try:
+            self.running = False
+            if hasattr(self, "server_socket") and self.server_socket:
+                self.server_socket.close()
+                self.server_socket = None
+        except Exception as e:
+            print("[SERVER] Error while closing server socket:", e)
+
+

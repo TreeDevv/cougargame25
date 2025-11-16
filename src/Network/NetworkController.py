@@ -26,13 +26,13 @@ class NetworkGameController:
             return
         if msg_type == "Start":  
             self.game.start_gameplay()
-            if not self.net.is_host:
-                self.net.send({"type": "Start"})
-            else:
-                self.send_new_image()
+            self.handle_image(msg["id"])
             return
         if msg_type == "image":
             self.handle_image(msg["id"])
+            return
+        if msg_type == "chat":
+            self.game.current_scene.chat_history = msg["text"]
             return
 
 
@@ -42,7 +42,10 @@ class NetworkGameController:
 
         if len(self.submitted_words) == 2:
             values = list(self.submitted_words.values())
-            correct = (values[0] == values[1] == self.secret_word)
+            correct = (
+                values[0].lower() == values[1].lower() == self.secret_word.lower()
+            )
+
 
             if correct:
                 print("[GAME] Words match! Correct homograph.")
@@ -57,8 +60,10 @@ class NetworkGameController:
 
     def handle_join(self):
         if self.net.is_host and len(self.net.server.clients) >= 2:
-            self.net.send({"type": "Start"})
-            #self.game.start_gameplay()
+            img_id = get_Random_Index()
+            self.net.send({"type": "Start", "id" : img_id})
+            self.game.start_gameplay()
+            self.handle_image(img_id)
             #self.send_new_image()
 
     def handle_image(self, image_id):
@@ -83,8 +88,14 @@ class NetworkGameController:
     def send_word(self, word):
         self.net.send({"type": "submit", "text": word})
 
+    def send_chat(self, word):
+        self.net.send({"type": "chat", "text": word})
+
     def send_new_image(self):
         img_id = get_Random_Index()
+        if img_id == None:
+            self.game.end_gameplay()
+            return
         self.net.send({"type": "image", "id": img_id})
 
     def host_lobby(self):

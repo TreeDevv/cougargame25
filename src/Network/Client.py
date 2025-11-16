@@ -69,3 +69,14 @@ class Client:
 
         print("[CLIENT] Disconnected.")
         self.connected = False
+
+    def stop(self):
+        print("[CLIENT] Stopping client...")
+        try:
+            self.connected = False
+            if hasattr(self, "client") and self.client:
+                self.client.close()
+                self.client = None
+        except Exception as e:
+            print("[CLIENT] Error while closing client socket:", e)
+
