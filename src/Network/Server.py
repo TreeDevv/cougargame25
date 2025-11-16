@@ -53,6 +53,7 @@ class Server:
                 "type": "init",
                 "id": player_id
             })))
+
             threading.Thread(
                 target=self._handle_client,
                 args=(conn, player_id),

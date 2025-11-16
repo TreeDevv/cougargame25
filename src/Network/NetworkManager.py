@@ -1,8 +1,10 @@
 import time
-from Client import Client
-from Server import Server
+from src.Network.Client import Client
+from src.Network.Server import Server
 import pickle
 import socket
+from src.util.ImageLoader import get_image_by_index, get_Random_Index
+
 class NetworkManager:
     def __init__(self):
         self.server = None
@@ -43,13 +45,16 @@ class NetworkManager:
             "code": code
         })
 
+
+
+
     def _server_message(self, sender, msg):
-        #print("[SERVER MSG]", sender, msg)
+        print("[SERVER MSG]", sender, msg)
         if self.on_message:
             self.on_message(sender, msg)
 
     def _client_message(self, sender, msg):
-        #print("[CLIENT MSG]", sender, msg)
+        print("[CLIENT MSG]", sender, msg)
         if self.on_message:
             self.on_message(sender, msg)
 
@@ -59,7 +64,16 @@ class NetworkManager:
                 conn.send(pickle.dumps((1, msg)))
         else:
             self.client.send(msg)
-    
+
+    def send_to_all(self, data):
+        if self.is_host:
+            packet = pickle.dumps((-1, data))  # -1 = server event, not a player
+            for pid, conn in self.server.clients.items():
+                try:
+                    conn.send(packet)
+                except:
+                    pass  # ignore broken connections
+
     def get_local_ip(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
