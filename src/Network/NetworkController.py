@@ -60,11 +60,11 @@ class NetworkGameController:
                 print("[GAME] Words match! Correct homograph.")
                 if self.net.is_host and len(self.net.server.clients) >= 2:
                     self.send_new_image()
+                self.submitted_words.clear()
 
             else:
                 print("[GAME] Incorrect words. Try again.")
 
-            self.submitted_words.clear()
 
     def handle_join(self):
         if self.net.is_host and len(self.net.server.clients) >= 2:
