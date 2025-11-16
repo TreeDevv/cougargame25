@@ -1,8 +1,9 @@
 from src.scenes.Scene import Scene
 import pygame
 import time
+import random
 from src.util.ImageLoader import get_Random_Index, get_image_by_index
-
+from src.util.math import relative_to_pixel
 
 class GameScene(Scene):
     def __init__(self, game):
@@ -12,8 +13,8 @@ class GameScene(Scene):
         pygame.mixer.music.set_volume(0.1)
 
         self.game = game
-        self.title_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 64)
-        self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 40)
+        self.title_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 24)
+        self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 48)
         self.input_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 32)
 
         self.display_image = None
@@ -24,16 +25,16 @@ class GameScene(Scene):
         self.timer = time.time() + self.timer_duration
 
         self.title_surf = self.title_font.render("Homographio", True, (255, 255, 255))
-        self.title_rect = self.title_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery - 200))
+        self.title_rect = self.title_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery -420 ))
 
-        self.placeholder_rect = pygame.Rect(0, 0, 300, 200)
-        self.placeholder_rect.center = screen_rect.center
+        self.placeholder_rect = pygame.Rect(0, 0, 400, 300)
+        self.placeholder_rect.center = (screen_rect.centerx, screen_rect.centery -150)
 
-        self.enter_surf = self.font.render("Enter World", True, (255, 255, 255))
-        self.enter_rect = self.enter_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery + 140))
+        self.enter_surf = self.font.render("Guess the homograph!", True, (255, 255, 255))
+        self.enter_rect = self.enter_surf.get_rect(center=(screen_rect.centerx, screen_rect.centery - 360))
 
         self.input_box = pygame.Rect(0, 0, 350, 50)
-        self.input_box.center = (screen_rect.centerx - 100, screen_rect.centery + 230)
+        self.input_box.center = (screen_rect.centerx - 100, screen_rect.centery + 80)
         self.input_text = ""
         self.active = False
 
@@ -100,6 +101,10 @@ class GameScene(Scene):
 
     def render(self, screen):
         screen.fill((25, 100, 50))
+
+        noise = super().create_dithered_surface()
+        noise.set_alpha(40)
+        screen.blit(noise, (0, 0))
 
         screen.blit(self.title_surf, self.title_rect)
 

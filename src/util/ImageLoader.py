@@ -12,7 +12,7 @@ photoList = [
     "chile1.jpg","chile2.jpg",
     "china1.jpg","china2.jpg",
     "converse1.jpg","converse2.jpg",
-    "cow1.jpg","cow2.jpg",
+    #"cow1.jpg","cow2.jpg",
     "crane1.jpg","crane2.jpg",
     "flush1.jpg","flush2.jpg",
     "fly1.jpg","fly2.jpg",
