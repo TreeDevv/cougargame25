@@ -114,6 +114,7 @@ class Game:
 
         elif mode == "join":
             ip = input("Server IP: ")
+            ip = self.net.get_local_ip()
             code = input("Join Code: ")
             self.net.join(code, on_message, ip)
 
