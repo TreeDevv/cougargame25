@@ -55,15 +55,15 @@ class MenuScene(Scene):
     def try_create_or_join(self):
         code = self.input_text.strip()
 
-        if code == "":
-            print("[MENU] Hosting lobby...")
-            join_code = self.net_ctrl.host_lobby()
-            self.lobby_message = f"JOIN CODE: {join_code}"
-            print("JOIN CODE:", join_code)
-        else:
-            print("[MENU] Joining lobby:", code)
-            self.net_ctrl.join_lobby(code)
-            self.lobby_message = "Joining lobby..."
+        # if code == "":
+        #     print("[MENU] Hosting lobby...")
+        #     join_code = self.net_ctrl.host_lobby()
+        #     self.lobby_message = f"JOIN CODE: {join_code}"
+        #     print("JOIN CODE:", join_code)
+        # else:
+        print("[MENU] Joining lobby:", code)
+        self.net_ctrl.join_lobby(code)
+        self.lobby_message = "Joining lobby..."
 
         self.input_text = ""
 
