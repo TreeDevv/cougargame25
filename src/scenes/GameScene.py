@@ -3,6 +3,7 @@ import pygame
 import time
 from src.util.ImageLoader import get_Random_Index, get_image_by_index
 
+
 class GameScene(Scene):
     def __init__(self, game):
         pygame.mixer.init()
@@ -42,24 +43,22 @@ class GameScene(Scene):
 
         self.chat_history = []
         self.max_chat_lines = 2
-        self.chat_rect = pygame.Rect(20, screen_rect.height - 140, screen_rect.width - 40, 120)
         self.chat_draft = ""
         self.chat_active = False
+        self.chat_rect = pygame.Rect(20, screen_rect.height - 140, screen_rect.width - 40, 120)
+
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.input_box.collidepoint(event.pos):
-                    self.active = True
-                else:
-                    self.active = False
-                if self.chat_rect.collidepoint(event.pos):
-                    self.chat_active = True
-                else:
-                    self.chat_active = False
+                self.active = self.input_box.collidepoint(event.pos)
+                self.chat_active = self.chat_rect.collidepoint(event.pos)
+
                 if self.button_rect.collidepoint(event.pos):
                     self.submit_clicked()
 
             if event.type == pygame.KEYDOWN:
+
                 if self.active:
                     if event.key == pygame.K_RETURN:
                         self.submit_clicked()
@@ -68,36 +67,40 @@ class GameScene(Scene):
                     else:
                         if event.unicode.isprintable():
                             self.input_text += event.unicode
-                            self.chat_draft = self.input_text
+
                 if self.chat_active:
                     if event.key == pygame.K_RETURN:
-                        self.chat_draft = ""
+                        self.submit_chat()
                     elif event.key == pygame.K_BACKSPACE:
-                        self.chat_draft = self.input_text
+                        self.chat_draft = self.chat_draft[:-1]
                     else:
                         if event.unicode.isprintable():
                             self.chat_draft += event.unicode
+
 
     def submit_clicked(self):
         text = self.input_text.strip()
         if text != "":
             self.game.net_ctrl.send_word(text)
+            self.input_text = ""
+
+
+    def submit_chat(self):
         text = self.chat_draft.strip()
         if text != "":
-            if len(self.chat_history) > self.max_chat_lines:
-                self.chat_history.pop(0)
-            self.game.net_ctrl.send_chat(self.chat_history)
-            
-        if self.active:
-            self.input_text = ""
-        if self.chat_active:
-            self.chat_draft = ""
+            self.chat_history.append(text)
+            self.game.net_ctrl.send_chat(text)
+
+        self.chat_draft = ""
+
 
     def update(self, dt):
         pass
 
+
     def render(self, screen):
         screen.fill((25, 100, 50))
+
         screen.blit(self.title_surf, self.title_rect)
 
         if self.display_image is None:
@@ -113,6 +116,7 @@ class GameScene(Scene):
         if remaining <= 0:
             self.game.end_gameplay()
             remaining = 0
+
         timer_text = self.font.render(f"Time: {remaining}", True, (255, 255, 255))
         screen.blit(timer_text, (screen.get_width() - 200, 20))
 
@@ -126,17 +130,16 @@ class GameScene(Scene):
         pygame.draw.rect(screen, (255, 255, 255), self.button_rect, border_radius=10)
         screen.blit(self.button_surf, self.button_surf.get_rect(center=self.button_rect.center))
 
-        pygame.draw.rect(screen, (255, 255, 255), self.chat_rect, border_radius=10)
+        pygame.draw.rect(screen, (255,255,255), self.chat_rect, border_radius=10)
         pygame.draw.rect(screen, (50, 50, 50), self.chat_rect, 2, border_radius=10)
 
         y = self.chat_rect.y + 8
 
         for msg in self.chat_history:
-            chat_surf = self.input_font.render(msg, True, (255, 255, 255))
+            chat_surf = self.input_font.render(msg, True, (0, 0, 0))
             screen.blit(chat_surf, (self.chat_rect.x + 10, y))
-            y += chat_surf.get_height() + 4
+            y += chat_surf.get_height() + 2
 
         if self.chat_draft != "":
-            preview = f"You typing: {self.chat_draft}"
-            chat_surf = self.input_font.render(preview, True, (255, 255, 255))
-            screen.blit(chat_surf, (self.chat_rect.x + 10, y))
+            draft_surf = self.input_font.render("> " + self.chat_draft, True, (100, 100, 100))
+            screen.blit(draft_surf, (self.chat_rect.x + 10, y))

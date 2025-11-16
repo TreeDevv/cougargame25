@@ -32,7 +32,9 @@ class NetworkGameController:
             self.handle_image(msg["id"])
             return
         if msg_type == "chat":
-            self.game.current_scene.chat_history = msg["text"]
+            self.game.current_scene.chat_history.append(msg["text"])
+            if len(self.game.current_scene.chat_history) > self.game.current_scene.max_chat_lines:
+                self.game.current_scene.chat_history.pop(0)
             return
 
 
