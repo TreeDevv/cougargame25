@@ -19,31 +19,57 @@ class NetworkManager:
         self.is_host = True
         self.on_message = on_message
 
-        self.server = Server(self.get_local_ip(), port=port)
-        self.server.start(on_message=self._server_message)
+        # Try creating the server
+        try:
+            self.server = Server(self.get_local_ip(), port=port)
+            self.server.start(on_message=self._server_message)
+        except Exception as e:
+            print(f"[NETWORK] Failed to host server: {e}")
+            self.server = None
+            return None   # Return None = failed to host
 
         time.sleep(0.2)
 
-        self.client = Client(self.get_local_ip(), port)
-        self.client.start(on_message=self._client_message)
-        self._client_message(1, {"type": "init", "id": 1})
+    # Try connecting client to self
+        try:
+            self.client = Client(self.get_local_ip(), port)
+            self.client.start(on_message=self._client_message)
+            self._client_message(1, {"type": "init", "id": 1})
+        except Exception as e:
+            print(f"[NETWORK] Host started, but client failed to connect: {e}")
+            self.client = None
 
         print("[NETWORK] Hosting game.")
         return self.server.lobby_code
+
 
     
     def join(self, code, on_message, ip, port=5001):
         self.is_host = False
         self.on_message = on_message
+
         ip = self.get_local_ip()
-        self.client = Client(ip, port)
-        self.client.start(on_message=self._client_message)
+
+        try:
+            self.client = Client(ip, port)
+            self.client.start(on_message=self._client_message)
+        except Exception as e:
+            print(f"[NETWORK] Failed to start client: {e}")
+            return False  # join failed
 
         time.sleep(0.3)
-        self.client.send({
-            "type": "join",
-            "code": code
-        })
+
+        try:
+            self.client.send({
+                "type": "join",
+                "code": code
+            })
+        except Exception as e:
+            print(f"[NETWORK] Failed to send join request: {e}")
+            return False
+
+        return True
+
 
     def stop_network(self):
         print("[NETWORK] Stopping network...")
