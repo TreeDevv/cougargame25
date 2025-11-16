@@ -15,9 +15,13 @@ def create_dithered_surface():
 
 class MenuScene(Scene):
     def __init__(self, game):
-        self.game = game
+        self.game = game  
+        pygame.mixer.music.stop()
+        pygame.mixer.music.load("assets/music/beepBoop2.mp3")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.5)
         self.net_ctrl = game.net_ctrl  # use network controller
-
+    
         screen = pygame.display.get_surface()
         self.screen_rect = screen.get_rect()
 

@@ -3,6 +3,10 @@ import pygame
 from src.util.ImageLoader import get_Random_Index, get_image_by_index
 class GameScene(Scene):
     def __init__(self, game):
+        pygame.mixer.init()
+        pygame.mixer.music.load("assets/music/beepBoop1.mp3")
+        pygame.mixer.music.play(-1)
+        pygame.mixer.music.set_volume(0.1)
         self.game = game
         self.title_font = pygame.font.Font("assets/fonts/StarCrush.ttf", 64)
         self.font = pygame.font.Font("assets/fonts/StarCrush.ttf", 40)

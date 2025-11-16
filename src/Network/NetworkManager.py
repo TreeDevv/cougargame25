@@ -82,4 +82,4 @@ class NetworkManager:
                 if "=" in line:
                     _, value = line.strip().split("=", 1)
                     ip = value
-        return "146.163.43.136"
+        return "146.163.115.183"

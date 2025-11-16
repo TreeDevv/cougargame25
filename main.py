@@ -10,9 +10,9 @@ from src.scenes.GameScene import GameScene
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         self.screen = pygame.display.set_mode((800, 600))
         pygame.display.set_caption("Homographio")
-
         self.net = NetworkManager()
         self.net_ctrl = NetworkGameController(self, self.net)
 
